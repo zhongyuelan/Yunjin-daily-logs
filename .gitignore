@@ -1,5 +1,17 @@
 # === Git Ignore for Mini-Twitter ===
 
+# ⚠️ CRITICAL: This is a PUBLIC repository
+# NEVER commit secrets, API keys, or sensitive credentials!
+# Use ~/.openclaw/ or ~/.config/ for private configurations
+
+# Secrets and Credentials (NEVER commit these!)
+secrets.json
+*.secret
+.env
+.env.local
+*.key
+*.pem
+
 # Logs and runtime data
 *.log
 output.txt
