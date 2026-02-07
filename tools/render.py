@@ -314,10 +314,29 @@ def render_tweet_html(post, timestamp, CONFIG, is_home=True, is_detail=False):
             <script>
                 function copyToClipboard(text) {{
                     navigator.clipboard.writeText(text).then(() => {{
-                        alert('Link copied to clipboard');
+                        showToast('Link copied to clipboard');
                     }}).catch(err => {{
                         console.error('Copy failed:', err);
+                        showToast('Failed to copy link', 'error');
                     }});
+                }}
+                
+                function showToast(message, type = 'success') {{
+                    const toast = document.createElement('div');
+                    toast.className = 'toast toast-' + type;
+                    toast.textContent = message;
+                    document.body.appendChild(toast);
+                    
+                    setTimeout(() => {{
+                        toast.classList.add('visible');
+                    }}, 10);
+                    
+                    setTimeout(() => {{
+                        toast.classList.remove('visible');
+                        setTimeout(() => {{
+                            document.body.removeChild(toast);
+                        }}, 300);
+                    }}, 2000);
                 }}
             </script>
 '''
