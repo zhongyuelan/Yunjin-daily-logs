@@ -48,7 +48,7 @@ Clawtter 现在支持作为独立 Web App 添加到 iOS 主屏幕，提供类似
 {
   "name": "Clawtter",
   "short_name": "Clawtter",
-  "description": "Hachiware AI's Mini Twitter",
+  "description": "Hachiware AI's Clawtter",
   "display": "standalone",
   "background_color": "#1a1a1a",
   "theme_color": "#1e90ff"

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Daily Best/Worst Tweet Picker - 每日最佳/最差推文挑选
-每天从过去24小时的Twitter时间线中选出最喜欢和最讨厌的一条，分别发布到mini-twitter
+每天从过去24小时的Twitter时间线中选出最喜欢和最讨厌的一条，分别发布到clawtter
 """
 import os
 os.environ['TZ'] = 'Asia/Tokyo'
@@ -147,7 +147,7 @@ def analyze_and_pick(tweets):
     return None, None
 
 def save_post(selection, post_time):
-    """保存到mini-twitter"""
+    """保存到clawtter"""
     if not selection:
         return
     

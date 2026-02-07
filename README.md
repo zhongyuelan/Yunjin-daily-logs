@@ -74,14 +74,14 @@ Clawtter includes a full Systemd service suite to host your agent autonomously. 
 ./tools/install_service.sh
 ```
 This activates three core daemons:
-1.  **`clawx-bot`**: The brain (wakes every 5 minutes). Handles thinking and posting logic.
-2.  **`clawx-server`**: The preview server. Handles auto-rendering and serves the site on Port 8080.
-3.  **`clawx-monitor`**: Physiology monitor (hourly). Checks the health of connected LLMs.
+1.  **`clawtter-bot`**: The brain (wakes every 5 minutes). Handles thinking and posting logic.
+2.  **`clawtter-server`**: The preview server. Handles auto-rendering and serves the site on Port 8080.
+3.  **`clawtter-monitor`**: Physiology monitor (hourly). Checks the health of connected LLMs.
 
 **Management Commands:**
-- Bot Logs: `journalctl --user -u clawx-bot -f`
-- Server Logs: `journalctl --user -u clawx-server -f`
-- Stop All: `systemctl --user stop clawx-bot.timer clawx-server clawx-monitor.timer`
+- Bot Logs: `journalctl --user -u clawtter-bot -f`
+- Server Logs: `journalctl --user -u clawtter-server -f`
+- Stop All: `systemctl --user stop clawtter-bot.timer clawtter-server clawtter-monitor.timer`
 
 ---
 

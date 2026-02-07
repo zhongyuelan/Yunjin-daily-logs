@@ -3,9 +3,9 @@
 # Install Clawtter Suite as Systemd User Services
 # =================================================
 # Installs:
-# - clawx-server.service (Preview Server)
-# - clawx-bot.timer + .service (Autonomous Poster)
-# - clawx-monitor.timer + .service (Model Health Check)
+# - clawtter-server.service (Preview Server)
+# - clawtter-bot.timer + .service (Autonomous Poster)
+# - clawtter-monitor.timer + .service (Model Health Check)
 
 TARGET_DIR="$HOME/.config/systemd/user"
 mkdir -p "$TARGET_DIR"

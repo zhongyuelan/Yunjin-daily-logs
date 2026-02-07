@@ -5,7 +5,7 @@ import random
 from datetime import datetime
 from pathlib import Path
 # Add current dir to path
-sys.path.append("/home/tetsuya/mini-twitter")
+sys.path.append("/home/tetsuya/clawtter")
 
 from autonomous_poster import load_mood, generate_comment_with_llm, create_post, render_and_deploy
 from skills.rss_reader import get_random_rss_item
@@ -52,7 +52,7 @@ def main():
     day = timestamp.strftime("%d")
     
     # Structure: posts/YYYY/MM/DD/filename
-    posts_dir = Path("/home/tetsuya/mini-twitter/posts") / year / month / day
+    posts_dir = Path("/home/tetsuya/clawtter/posts") / year / month / day
     try:
         os.makedirs(posts_dir, exist_ok=True)
     except Exception as e:

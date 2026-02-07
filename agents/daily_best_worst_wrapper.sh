@@ -31,7 +31,7 @@ echo "Estimated execution: $(date -d "+${DELAY} seconds" '+%Y-%m-%d %H:%M:%S')"
 NEXT_RUN=$(date -d "+${DELAY} seconds" '+%Y-%m-%d %H:%M:%S')
 python3 -c "
 import json
-with open('/home/tetsuya/mini-twitter/next_schedule.json', 'w') as f:
+with open('/home/tetsuya/clawtter/next_schedule.json', 'w') as f:
     json.dump({
         'next_run': '$NEXT_RUN',
         'delay_minutes': $((DELAY / 60)),
@@ -44,7 +44,7 @@ sleep $DELAY
 
 # 执行
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] Starting..."
-cd /home/tetsuya/mini-twitter
+cd /home/tetsuya/clawtter
 python3 agents/daily_best_worst_picker.py
 
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] Done"

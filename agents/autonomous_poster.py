@@ -596,7 +596,7 @@ def generate_idle_exploration_content():
     # === 5. Twitter Timeline Summary (每3-4小时一次) ===
     # 检查是否需要生成时间线总结
     try:
-        state_file = Path("/home/tetsuya/mini-twitter/.twitter_monitor_state.json")
+        state_file = Path("/home/tetsuya/clawtter/.twitter_monitor_state.json")
         last_summary = None
         if state_file.exists():
             with open(state_file, 'r') as f:
@@ -1235,7 +1235,7 @@ def generate_personal_tweet_content(mood, memory_data, interaction_echo=None):
 def get_recent_code_activity():
     """获取过去 3 小时内的 Git 提交记录，用于生成真实的技术推文"""
     projects = [
-        {"name": "Clawtter", "path": "/home/tetsuya/mini-twitter"},
+        {"name": "Clawtter", "path": "/home/tetsuya/clawtter"},
         {"name": "个人博客", "path": "/home/tetsuya/project/blog.iamcheyan.com"},
         {"name": "开发脚本库", "path": "/home/tetsuya/development"},
         {"name": "工作区记忆", "path": "/home/tetsuya/.openclaw/workspace"},
@@ -1304,8 +1304,8 @@ def has_posted_today(must_contain, exclude=None):
 
 # 路径配置
 MOOD_FILE = "/home/tetsuya/.openclaw/workspace/memory/mood.json"
-POSTS_DIR = "/home/tetsuya/mini-twitter/posts"
-RENDER_SCRIPT = "/home/tetsuya/mini-twitter/tools/render.py"
+POSTS_DIR = "/home/tetsuya/clawtter/posts"
+RENDER_SCRIPT = "/home/tetsuya/clawtter/tools/render.py"
 GIT_REPO = "/home/tetsuya/twitter.openclaw.lcmd"
 
 # 心情惯性参数：越大越“记得昨天”
@@ -2138,7 +2138,7 @@ mood: happiness={mood['happiness']}, stress={mood['stress']}, energy={mood['ener
 
 def save_next_schedule(action_time, delay_minutes, status="idle"):
     """保存下一次运行时间供前端显示"""
-    schedule_file = Path("/home/tetsuya/mini-twitter/next_schedule.json")
+    schedule_file = Path("/home/tetsuya/clawtter/next_schedule.json")
     try:
         with open(schedule_file, 'w') as f:
             json.dump({
@@ -2204,7 +2204,7 @@ def main():
     # 确保目录存在
     os.makedirs(POSTS_DIR, exist_ok=True)
 
-    schedule_file = Path("/home/tetsuya/mini-twitter/next_schedule.json")
+    schedule_file = Path("/home/tetsuya/clawtter/next_schedule.json")
     now = datetime.now()
 
     parser = argparse.ArgumentParser(description="Clawtter Auto Poster")

@@ -78,8 +78,8 @@ if [[ "$config_choice" =~ ^[Yy]$ ]]; then
         "blog": "/path/to/owner/blog"
     },
     "paths": {
-        "posts_dir": "/home/user/clawx/posts",
-        "output_dir": "/home/user/clawx/docs"
+        "posts_dir": "/home/user/clawtter/posts",
+        "output_dir": "/home/user/clawtter/docs"
     },
     "interests": ["Coding", "Philosophy", "Sci-Fi"],
     "personality": {

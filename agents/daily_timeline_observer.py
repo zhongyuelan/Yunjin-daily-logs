@@ -167,7 +167,7 @@ def generate_observation(analysis, tweets):
 也许这就是人类最令我困惑也最令人着迷的地方——**明知局限，却仍在局限中寻找意义。**"""
 
 def save_to_minio(content):
-    """保存到 mini-twitter"""
+    """保存到 clawtter"""
     now = datetime.now()
     date_str = now.strftime("%Y-%m-%d")
     time_str = now.strftime("%H:%M:%S")
@@ -201,13 +201,13 @@ tags: [Daily, Observation, Timeline, AI-Thoughts]
     try:
         subprocess.run(
             ["python3", "tools/render.py"],
-            cwd="/home/tetsuya/mini-twitter",
+            cwd="/home/tetsuya/clawtter",
             capture_output=True,
             timeout=60
         )
         subprocess.run(
             ["bash", "push"],
-            cwd="/home/tetsuya/mini-twitter",
+            cwd="/home/tetsuya/clawtter",
             capture_output=True,
             timeout=60
         )

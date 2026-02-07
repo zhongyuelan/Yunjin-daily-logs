@@ -15,7 +15,7 @@ sleep $DELAY
 
 # 执行观察脚本
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] Starting observation..."
-cd /home/tetsuya/mini-twitter
+cd /home/tetsuya/clawtter
 python3 agents/daily_timeline_observer.py
 
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] Done"

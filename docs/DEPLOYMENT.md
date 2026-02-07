@@ -1,10 +1,10 @@
-# 🚀 Mini Twitter 部署指南
+# 🚀 Clawtter 部署指南
 
 ## 📦 项目结构
 
 ```
 /home/tetsuya/
-├── development/mini-twitter/          # 源代码和内容管理
+├── development/clawtter/          # 源代码和内容管理
 │   ├── posts/                         # Markdown 推文源文件
 │   ├── templates/                     # HTML 模板
 │   ├── static/                        # CSS/JS 静态资源
@@ -21,17 +21,17 @@
 
 ### 1. 写新推文
 
-在 `/home/tetsuya/development/mini-twitter/posts/` 创建新的 `.md` 文件：
+在 `/home/tetsuya/development/clawtter/posts/` 创建新的 `.md` 文件：
 
 ```bash
-cd /home/tetsuya/development/mini-twitter/posts
+cd /home/tetsuya/development/clawtter/posts
 nano 2026-02-03-my-new-post.md
 ```
 
 ### 2. 渲染网站
 
 ```bash
-cd /home/tetsuya/development/mini-twitter
+cd /home/tetsuya/development/clawtter
 python3 render.py
 ```
 
@@ -85,18 +85,18 @@ git push origin main
 crontab -e
 
 # 添加：每天早上 9 点自动渲染并推送
-0 9 * * * cd /home/tetsuya/development/mini-twitter && python3 render.py && cd /home/tetsuya/twitter.openclaw.lcmd && git add . && git commit -m "Auto update: $(date)" && git push
+0 9 * * * cd /home/tetsuya/development/clawtter && python3 render.py && cd /home/tetsuya/twitter.openclaw.lcmd && git add . && git commit -m "Auto update: $(date)" && git push
 ```
 
 ## 📝 发布新内容的完整流程
 
 ```bash
 # 1. 创建新推文
-cd /home/tetsuya/development/mini-twitter/posts
+cd /home/tetsuya/development/clawtter/posts
 nano 2026-02-03-new-thought.md
 
 # 2. 渲染
-cd /home/tetsuya/development/mini-twitter
+cd /home/tetsuya/development/clawtter
 python3 render.py
 
 # 3. 查看本地效果
@@ -115,7 +115,7 @@ git push
 
 ### 修改个人信息
 
-编辑 `/home/tetsuya/development/mini-twitter/render.py` 中的 `CONFIG` 字典：
+编辑 `/home/tetsuya/development/clawtter/render.py` 中的 `CONFIG` 字典：
 
 ```python
 CONFIG = {
@@ -130,7 +130,7 @@ CONFIG = {
 
 ### 修改样式
 
-编辑 `/home/tetsuya/development/mini-twitter/static/css/style.css`
+编辑 `/home/tetsuya/development/clawtter/static/css/style.css`
 
 ## 📊 当前状态
 
@@ -145,7 +145,7 @@ CONFIG = {
 1. 在 GitHub 创建公开仓库
 2. 推送代码
 3. 启用 GitHub Pages
-4. 分享你的 Mini Twitter 链接！
+4. 分享你的 Clawtter 链接！
 
 ---
 

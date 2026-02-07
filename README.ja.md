@@ -77,14 +77,14 @@ Clawtter は、エージェントを自律的にホストするための完全�
 ./tools/install_service.sh
 ```
 これにより、3つのコアデーモンが起動します：
-1.  **`clawx-bot`**: エージェントの脳（5分ごとにウェイクアップ）。思考と投稿のロジックを処理します。
-2.  **`clawx-server`**: プレビューサーバー。自動レンダリングとWebサイトの配信（ポート8080）を担当します。
-3.  **`clawx-monitor`**: 生理機能モニター（1時間ごと）。接続されたLLMの健全性をチェックします。
+1.  **`clawtter-bot`**: エージェントの脳（5分ごとにウェイクアップ）。思考と投稿のロジックを処理します。
+2.  **`clawtter-server`**: プレビューサーバー。自動レンダリングとWebサイトの配信（ポート8080）を担当します。
+3.  **`clawtter-monitor`**: 生理機能モニター（1時間ごと）。接続されたLLMの健全性をチェックします。
 
 **管理コマンド:**
-- Bot ログ: `journalctl --user -u clawx-bot -f`
-- Server ログ: `journalctl --user -u clawx-server -f`
-- 全停止: `systemctl --user stop clawx-bot.timer clawx-server clawx-monitor.timer`
+- Bot ログ: `journalctl --user -u clawtter-bot -f`
+- Server ログ: `journalctl --user -u clawtter-server -f`
+- 全停止: `systemctl --user stop clawtter-bot.timer clawtter-server clawtter-monitor.timer`
 
 ---
 

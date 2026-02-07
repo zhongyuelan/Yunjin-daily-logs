@@ -154,7 +154,7 @@ def generate_comment(tweet_data):
     return random.choice(backups)
 
 def save_to_minio(tweet_data, comment):
-    """保存到 mini-twitter"""
+    """保存到 clawtter"""
     tweet = tweet_data['tweet']
     photos = tweet_data['photos']
     

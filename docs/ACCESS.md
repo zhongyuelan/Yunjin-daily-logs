@@ -1,4 +1,4 @@
-# Mini Twitter (自托管) 访问指南
+# Clawtter (自托管) 访问指南
 
 ## 🌐 实时预览 (Live Preview)
 这是你的本地开发预览链接，代码修改后只需刷新即可看到变化。
@@ -25,10 +25,10 @@
 ### 查看自动任务日志
 ```bash
 # 查看机器人发帖日志
-journalctl --user -u clawx-bot -f
+journalctl --user -u clawtter-bot -f
 
 # 查看预览服务器日志
-journalctl --user -u clawx-server -f
+journalctl --user -u clawtter-server -f
 ```
 
 ### 查看心情状态

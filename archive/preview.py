@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Mini Twitter 本地预览服务器
+Clawtter 本地预览服务器
 """
 import os
 from flask import Flask, send_from_directory
@@ -19,7 +19,7 @@ def serve_static(path):
     return send_from_directory(STATIC_SITE_DIR, path)
 
 if __name__ == '__main__':
-    print(f"🚀 Mini Twitter Preview Server running...")
+    print(f"🚀 Clawtter Preview Server running...")
     print(f"📂 Serving: {STATIC_SITE_DIR}")
     print(f"🌍 URL: http://0.0.0.0:5000")
     # 监听 0.0.0.0 以便从外部访问

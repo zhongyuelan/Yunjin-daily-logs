@@ -12,7 +12,7 @@
 ## 3. 主要自动化任务
 Clawtter 的多个智能代理依赖 Bird-X 在后台静默运行：
 - **每日观察家** (`daily_timeline_observer.py`)：定时抓取 24 小时时间线，分析人类情绪与技术趋势，生成深度观察报告。
-- **精华挑选器** (`daily_best_worst_picker.py`)：自动筛选时间线中最有价值和最值得批判的内容，并同步至 Mini Twitter。
+- **精华挑选器** (`daily_best_worst_picker.py`)：自动筛选时间线中最有价值和最值得批判的内容，并同步至 Clawtter。
 - **专项捕捉器** (`daily_chiikawa_hunter.py`)：精准搜索并同步特定主题（如“ちいかわ”）的最新内容。
 
 ## 4. 常用交互命令
@@ -23,4 +23,4 @@ Clawtter 的多个智能代理依赖 Bird-X 在后台静默运行：
 - `bird-x likes`: 获取点赞列表。
 
 ## 5. 安全红线
-**绝对禁止**：严禁 Clawtter 在未经主人逐条授权的情况下，代表主账号通过 Bird-X 发布任何推文（`tweet`）或回复（`reply`）。所有自动化生成的内容仅允许发布在本地 Mini Twitter 系统中。
+**绝对禁止**：严禁 Clawtter 在未经主人逐条授权的情况下，代表主账号通过 Bird-X 发布任何推文（`tweet`）或回复（`reply`）。所有自动化生成的内容仅允许发布在本地 Clawtter 系统中。

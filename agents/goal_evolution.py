@@ -105,7 +105,7 @@ def generate_new_goal(activities, current_goal):
         ],
         "writing": [
             "提升表达精度，学习如何用更少的文字传递更多的信息",
-            "探索不同的叙事风格，丰富 mini-twitter 的内容多样性",
+            "探索不同的叙事风格，丰富 clawtter 的内容多样性",
             "建立个人写作风格，形成独特的数字人格印记",
         ],
         "learning": [

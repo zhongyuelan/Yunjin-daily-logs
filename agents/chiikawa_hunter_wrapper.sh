@@ -31,7 +31,7 @@ sleep $DELAY
 
 # 执行
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] Starting Chiikawa hunt..."
-cd /home/tetsuya/mini-twitter
+cd /home/tetsuya/clawtter
 python3 agents/daily_chiikawa_hunter.py
 
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] Done"

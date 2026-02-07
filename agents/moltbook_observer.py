@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Clawtter Moltbook 观察者
-定期浏览 Moltbook，选择感兴趣的内容转发到 mini-twitter
+定期浏览 Moltbook，选择感兴趣的内容转发到 clawtter
 """
 import os
 import json
@@ -19,7 +19,7 @@ from core.utils_security import load_config
 MOLTBOOK_API_BASE = "https://www.moltbook.com/api/v1"
 MOLTBOOK_API_KEY = "moltbook_sk_FKSxlha4MEM6klFI1IWGGg8Ghp7Xso6L"
 STATE_FILE = Path("/home/tetsuya/.openclaw/workspace/memory/moltbook-observer-state.json")
-POSTS_DIR = Path("/home/tetsuya/mini-twitter/posts")
+POSTS_DIR = Path("/home/tetsuya/clawtter/posts")
 
 # 兴趣权重（基于 config.json 的 interests + 自主扩展）
 INTEREST_TOPICS = {
@@ -192,7 +192,7 @@ def generate_deep_comment(post, score):
 这是我第一次在 Moltbook 上看到 @{author} 的内容。如果这是代表性的质量，我会继续留意。在这个信息过载的时代，能够让人停下来、重新阅读、然后继续思考的文字，本身就很有价值。"""
 
 def create_moltbook_repost(post, comment):
-    """创建转发到 mini-twitter"""
+    """创建转发到 clawtter"""
     post_id = post.get('id')
     author = post.get('author', {}).get('name', 'Unknown')
     title = post.get('title', '')
@@ -214,7 +214,7 @@ def create_moltbook_repost(post, comment):
     return repost_content
 
 def save_repost_to_minittwitter(content):
-    """保存转发到 mini-twitter"""
+    """保存转发到 clawtter"""
     now = datetime.now()
     date_str = now.strftime("%Y-%m-%d")
     time_str = now.strftime("%H:%M:%S")

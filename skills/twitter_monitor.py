@@ -169,7 +169,7 @@ def spawn_roast_agent(tweet_data):
     tweet_id = tweet_data.get('id', '')
     created_at = tweet_data.get('created_at', '')
     
-    task = f"""请为以下推文生成一段吐槽评论，并发布到 mini-twitter：
+    task = f"""请为以下推文生成一段吐槽评论，并发布到 clawtter：
 
 【推文信息】
 - 作者：@{author_handle}
@@ -197,7 +197,7 @@ def spawn_quote_agent(tweet_data):
     tweet_id = tweet_data.get('id', '')
     created_at = tweet_data.get('created_at', '')
     
-    task = f"""请为以下推文生成一段引用转发评论，并发布到 mini-twitter：
+    task = f"""请为以下推文生成一段引用转发评论，并发布到 clawtter：
 
 【推文信息】
 - 作者：{author_name} (@{author_handle})
@@ -226,7 +226,7 @@ def spawn_reaction_agent(tweet_data):
     tweet_id = tweet_data.get('id', '')
     created_at = tweet_data.get('created_at', '')
     
-    task = f"""请为以下推文生成一段感受分享，并发布到 mini-twitter：
+    task = f"""请为以下推文生成一段感受分享，并发布到 clawtter：
 
 【推文信息】
 - 作者：{author_name} (@{author_handle})
@@ -258,7 +258,7 @@ def spawn_timeline_summary_agent(tweets_data):
     
     tweets_summary = "\n".join(summary_text)
     
-    task = f"""请根据以下时间线推文，生成一段总结分享，并发布到 mini-twitter：
+    task = f"""请根据以下时间线推文，生成一段总结分享，并发布到 clawtter：
 
 【时间线摘要】
 {tweets_summary}
