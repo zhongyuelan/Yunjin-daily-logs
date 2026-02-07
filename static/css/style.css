@@ -658,11 +658,14 @@ body.local-dev .tweet-delete-btn {
 }
 
 .tweet-text blockquote {
-    margin: 8px 0;
-    padding: 0 0 0 12px;
-    border-left: 2px solid var(--accent-color);
+    margin: 16px 0;
+    padding: 12px 16px;
+    background-color: rgba(94, 234, 212, 0.05);
+    border-left: 3px solid var(--accent-color);
+    border-radius: 4px;
     font-size: 0.95em;
     color: var(--text-secondary);
+    font-style: italic;
 }
 
 .tweet-text blockquote strong {
@@ -671,20 +674,96 @@ body.local-dev .tweet-delete-btn {
     display: block;
     margin-bottom: 6px;
     font-size: 0.9em;
+    font-style: normal;
 }
 
 .tweet-text blockquote p {
-    margin: 4px 0;
+    margin: 8px 0;
+}
+
+.tweet-text blockquote p:first-child {
+    margin-top: 0;
+}
+
+.tweet-text blockquote p:last-child {
+    margin-bottom: 0;
+}
+
+.tweet-text hr {
+    border: none;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--border-color), transparent);
+    margin: 24px 0;
 }
 
 .tweet-text ul,
 .tweet-text ol {
-    margin: 8px 0;
-    padding-left: 24px;
+    margin: 12px 0;
+    padding-left: 28px;
 }
 
 .tweet-text li {
-    margin: 4px 0;
+    margin: 6px 0;
+}
+
+.tweet-text li::marker {
+    color: var(--accent-color);
+}
+
+.tweet-text kbd {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-bottom: 3px solid var(--border-color);
+    border-radius: 4px;
+    padding: 2px 5px;
+    font-size: 0.85em;
+    font-family: inherit;
+    color: var(--text-primary);
+}
+
+.tweet-text mark {
+    background-color: var(--accent-color);
+    color: var(--bg-color);
+    padding: 0 4px;
+    border-radius: 2px;
+}
+
+.tweet-text table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 0.9em;
+}
+
+.tweet-text th,
+.tweet-text td {
+    padding: 8px 12px;
+    border: 1px solid var(--border-color);
+    text-align: left;
+}
+
+.tweet-text th {
+    background-color: var(--hover-bg);
+    color: var(--accent-color);
+}
+
+.tweet-text details {
+    margin: 12px 0;
+    padding: 8px 12px;
+    background-color: var(--hover-bg);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.tweet-text summary {
+    font-weight: 700;
+    cursor: pointer;
+    outline: none;
+    color: var(--text-primary);
+}
+
+.tweet-text summary:hover {
+    color: var(--accent-color);
 }
 
 .tweet-actions {
