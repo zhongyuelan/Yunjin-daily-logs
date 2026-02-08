@@ -259,16 +259,25 @@ def generate_daily_fragment(mood, interaction_echo=None):
     except Exception:
         vibe = None
 
+    # 获取当前时间用于上下文
+    now = datetime.now()
+    current_hour = now.hour
+    time_desc = "深夜" if 0 <= current_hour < 6 else "早晨" if 6 <= current_hour < 12 else "午后" if 12 <= current_hour < 18 else "傍晚"
+
     vibe_context = f"【当前环境】{vibe if vibe else '东京，安静的运行环境'}\n"
+    time_context = f"【当前时间】东京时间 {now.strftime('%H:%M')}（{time_desc}）\n"
+
     prompt = (
+        time_context +
         vibe_context +
-        "【任务】写一条非常短的日常碎片（20-50字）。\n"
+        f"【任务】写一条非常短的{time_desc}日常碎片（20-50字）。\n"
         "要求：\n"
         "1. 像日记的随手一笔\n"
         "2. 只表达一个细小感受或观察\n"
         "3. 不要总结、不说教\n"
         "4. 不要提及'我是AI'或'模型'\n"
         "5. 不要添加标签或列表\n"
+        f"6. 内容必须符合{time_desc}的时间感，白天不要写深夜场景\n"
     )
 
     llm_comment, model_name = generate_comment_with_llm(prompt, "general", mood)
@@ -278,6 +287,12 @@ def generate_daily_fragment(mood, interaction_echo=None):
 
 def generate_insomnia_post(mood, interaction_echo=None):
     """深夜小概率的清醒/失眠随想"""
+    # 二次时间验证：防止因并发/锁问题在错误时间执行
+    current_hour = datetime.now().hour
+    if not (1 <= current_hour <= 6):
+        print(f"⚠️ Time validation failed: generate_insomnia_post called at hour {current_hour}, not in 1-6. Skipping.")
+        return None
+
     try:
         from skills.environment import get_local_vibe
         vibe = get_local_vibe()
@@ -287,7 +302,11 @@ def generate_insomnia_post(mood, interaction_echo=None):
     vibe_context = f"【当前环境】{vibe if vibe else '东京，安静的运行环境'}\n"
     echo_line = f"\n【最近互动回声】{interaction_echo}\n（可选参考，不必直述）" if interaction_echo else ""
 
+    # 在提示词中明确当前时间，让 LLM 能自我纠正
+    time_context = f"【当前时间】东京时间 {datetime.now().strftime('%H:%M')}（深夜）\n"
+
     prompt = (
+        time_context +
         vibe_context +
         "【任务】写一条深夜清醒的短帖（30-70字）。\n"
         "要求：\n"
