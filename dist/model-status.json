@@ -1,79 +1,72 @@
 {
-  "generated_at": "2026-02-08 23:24:54",
+  "generated_at": "2026-02-09 00:00:09",
   "summary": {
-    "passed": 12,
-    "failed": 0,
+    "passed": 11,
+    "failed": 1,
     "total": 12
   },
   "results": [
     {
-      "provider": "LCMD",
+      "provider": "_disabled_LCMD",
       "model": "gemini-claude-sonnet-4-5",
       "success": true,
-      "status": "OK (Spawn 3.1s)",
+      "status": "OK (Spawn 3.7s)",
+      "response": "CLI responded"
+    },
+    {
+      "provider": "_disabled_kimi",
+      "model": "moonshot-v1-32k",
+      "success": true,
+      "status": "OK (Spawn 2.1s)",
+      "response": "CLI responded"
+    },
+    {
+      "provider": "_disabled_kimi",
+      "model": "moonshot-v1-8k",
+      "success": true,
+      "status": "OK (Spawn 3.6s)",
+      "response": "CLI responded"
+    },
+    {
+      "provider": "_disabled_openrouter",
+      "model": "moonshotai/kimi-k2.5",
+      "success": true,
+      "status": "OK (Spawn 3.8s)",
       "response": "CLI responded"
     },
     {
       "provider": "google",
       "model": "gemini-2.5-flash",
       "success": true,
-      "status": "OK (0.71s)",
+      "status": "OK (0.69s)",
       "response": "Response matched but unexpected format"
     },
     {
       "provider": "google",
       "model": "gemini-2.5-pro",
       "success": true,
-      "status": "OK (2.19s)",
+      "status": "OK (1.24s)",
       "response": "Response matched but unexpected format"
-    },
-    {
-      "provider": "google-alt",
-      "model": "gemini-2.5-flash",
-      "success": true,
-      "status": "OK (0.74s)",
-      "response": "Hi"
-    },
-    {
-      "provider": "kimi",
-      "model": "moonshot-v1-32k",
-      "success": true,
-      "status": "OK (Spawn 1.8s)",
-      "response": "CLI responded"
-    },
-    {
-      "provider": "kimi",
-      "model": "moonshot-v1-8k",
-      "success": true,
-      "status": "OK (Spawn 2.9s)",
-      "response": "CLI responded"
     },
     {
       "provider": "nvidia",
       "model": "qwen/qwen2.5-coder-32b-instruct",
       "success": true,
-      "status": "OK (0.31s)",
+      "status": "OK (0.24s)",
       "response": "Hello! How can I assist you today?"
     },
     {
       "provider": "opencode",
       "model": "big-pickle",
       "success": true,
-      "status": "OK (Spawn 2.8s)",
+      "status": "OK (Spawn 3.5s)",
       "response": "CLI responded"
     },
     {
       "provider": "opencode",
       "model": "glm-4.7-free",
       "success": true,
-      "status": "OK (Spawn 2.5s)",
-      "response": "CLI responded"
-    },
-    {
-      "provider": "openrouter",
-      "model": "moonshotai/kimi-k2.5",
-      "success": true,
-      "status": "OK (Spawn 3.2s)",
+      "status": "OK (Spawn 2.7s)",
       "response": "CLI responded"
     },
     {
@@ -89,6 +82,13 @@
       "success": true,
       "status": "OAUTH MODE",
       "response": "Managed by OpenClaw"
+    },
+    {
+      "provider": "google-alt",
+      "model": "gemini-2.5-flash",
+      "success": false,
+      "status": "HTTP Timeout",
+      "response": "HTTPSConnectionPool(host='generativelanguage.googleapis.com'"
     }
   ]
 }
