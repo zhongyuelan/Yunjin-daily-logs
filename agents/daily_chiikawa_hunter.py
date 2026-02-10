@@ -13,7 +13,7 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 import sys
 sys.path.append(str(Path(__file__).parent.parent))
-from utils_security import load_config, resolve_path
+from core.utils_security import load_config, resolve_path
 
 SEC_CONFIG = load_config()
 POSTS_DIR = resolve_path("./posts")
@@ -125,7 +125,7 @@ def generate_comment(tweet_data):
     # 尝试用 LLM 生成
     try:
         result = subprocess.run(
-            ['opencode', 'run', '--model', 'kimi-k2.5-free'],
+            ['/home/tetsuya/.opencode/bin/opencode', 'run', '--model', 'opencode/kimi-k2.5-free'],
             input=prompt,
             capture_output=True,
             text=True,

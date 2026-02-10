@@ -13,7 +13,8 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 import sys
 sys.path.append(str(Path(__file__).parent.parent))
-from utils_security import load_config, resolve_path
+sys.path.append(str(Path(__file__).parent))
+from core.utils_security import load_config, resolve_path
 
 SEC_CONFIG = load_config()
 POSTS_DIR = resolve_path("./posts")
