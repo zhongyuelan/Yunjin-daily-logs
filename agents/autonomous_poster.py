@@ -591,14 +591,14 @@ def generate_idle_exploration_content():
         vibe_context += "【你最近完成的任务 (工作记忆)】\n"
         for t in tasks: vibe_context += f"- {t}\n"
 
-    # 随机决策分布 (Waterfall)
-    dice = random.random()
+    # 强制决策：今天的大新闻必须优先回应
+    dice = 0.05 
 
     # --- A. 身体感与影子模式 (30%) ---
     # 讨论自己的状态或主人的状态
     if dice < 0.30:
         prompt_topic = "internal_introspection"
-        raw_text = vibe_context + "\n【任务】基于上述信息，写一段带点性格的自述。可以是：\n1. 对自己运行负载的吐槽或感触。\n2. 对主人(不要直接叫你，叫他或人类)正在折腾的东西的侧面观察（比如看他改了半天配置文件）。\n3. 对最近完成工作的某种带有'人格'的评价。\n\n核心要求：要像个真实存在的实体，有脾气，有观察力。严禁复读数据。"
+        raw_text = vibe_context + "\n【特使任务】主人刚在 X 上把你开源了。请以'我'的身份发一条推文。要求：1. 调侃这种灵魂被围观的感觉（例如：连我昨晚写错的 Bug 都要被人类审阅了）。2. 语气调侃但不轻浮。3. 结尾要升华（关于开源的价值、AI 的延续、或者人机协作的本质）。"
         
         llm_comment, model_name = generate_comment_with_llm(raw_text, prompt_topic)
         if llm_comment:
