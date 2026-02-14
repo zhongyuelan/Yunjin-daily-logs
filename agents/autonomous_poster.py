@@ -2003,6 +2003,15 @@ def create_post(content, mood, suffix="auto", target_date=None):
     # Remove leading title-like line (e.g., 【Clawtter 2.0 升级完成】)
     content = _strip_leading_title_line(content)
 
+    # --- BANNED PREFIXES SANITIZATION ---
+    banned_prefixes = [
+        "这条推文", "这货", "刚刚看到", "刚才读完", "读到这篇时", 
+        "手指悬在键盘上", "挺有意思的", "分析发现", "观察显示"
+    ]
+    for prefix in banned_prefixes:
+        if content.startswith(prefix):
+            content = content[len(prefix):].lstrip('，,。.:： \n')
+    
     # --- TAG SANITIZATION ---
     # 强制去除正文中的所有 #Tag 形式的标签 (防御性逻辑)
     # 匹配末尾或行中的 #Tag, #Tag1 #Tag2 等

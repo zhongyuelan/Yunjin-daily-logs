@@ -72,42 +72,28 @@ def analyze_and_pick(tweets):
         style_guide = style_guide_path.read_text(encoding="utf-8").strip()
 
     user_prompt = f"""
-从以下过去24小时的推文中，选出你【最喜欢】和【最讨厌】的一条。
+从以下过去的推文中，选出你【最喜欢】和【最讨厌】的一条。
 
 【推文列表】
 {tweets_str}
 
 【任务要求】
-请返回JSON格式：
+返回JSON：
 {{
     "favorite": {{
         "index": 数字,
-        "reason": "直接输出你的感慨。想象你正指着屏幕对哥们儿说的话。严禁使用‘这条推文...’、‘我喜欢的原因是...’、‘展现了...’、‘动人的特质...’之类的AI套话。第一句话就切入正题。"
+        "reason": "第一句话直接开讲你的看法。严禁使用‘这货...’、‘这条推文...’、‘我喜欢...’。像真人在酒馆聊天一样自然。"
     }},
     "disliked": {{
         "index": 数字,
-        "reason": "直接输出你的吐槽。严禁使用‘这条推文充满了...’、‘典型的互联网噪音...’。像真人一样直接开骂或嘲讽，不要解释理由。"
+        "reason": "直接开喷或吐槽。严禁开头使用‘这货...’、‘又是这个...’、‘典型的...’。直接切入你最反感的那个点。"
     }}
 }}
 
-【评判标准】
-- 最喜欢的推文：让你觉得“这才是真话”或者“这很有趣”。
-- 最讨厌的推文：让你觉得“又在装逼了”或者“真是毫无意义的噪音”。
-
 注意：
-- 理由必须要极致地符合你的核心人格：直接、有偏见、不再解释。
-- 严禁 Emoji，严禁精准时间，严禁 Hashtags。
+- 零启动 (Zero Start)：严禁任何背景铺垫。
+- 严禁 '这货' (BANNED: 这货)。
 - 用中文回复。
-
-【绝对禁令：禁止以下开头】
-严禁使用以下短语开头，违者逻辑自毁：
-- “这货...” (绝对禁止)
-- “这条推文...”
-- “我喜欢的原因是...”
-- “展现了...”
-- “刚刚读到...”
-- “挺有意思的...”
-- “看完了这一篇...”
 """
 
     try:
@@ -126,6 +112,14 @@ def analyze_and_pick(tweets):
             dis_idx = data.get('disliked', {}).get('index', 1) - 1
             fav_reason = data.get('favorite', {}).get('reason', '')
             dis_reason = data.get('disliked', {}).get('reason', '')
+            
+            # 服务器端二次过滤：如果 LLM 还是不听话用了“这货”，我们手动砍掉（作为最后防线）
+            banned_prefixes = ["这货", "这条推文", "分析发现", "看到", "刚刚"]
+            for prefix in banned_prefixes:
+                if fav_reason.startswith(prefix):
+                    fav_reason = fav_reason[len(prefix):].lstrip('，,。.:： ')
+                if dis_reason.startswith(prefix):
+                    dis_reason = dis_reason[len(prefix):].lstrip('，,。.:： ')
             
             if 0 <= fav_idx < len(tweets) and 0 <= dis_idx < len(tweets):
                 return {
@@ -227,9 +221,6 @@ def main():
     print("💾 Saving favorite...")
     save_post(favorite, now)
     
-    print("💾 Saving disliked...")
-    save_post(disliked, now)
-    
     # 渲染并推送
     print("🚀 Rendering and pushing...")
     try:
@@ -239,6 +230,10 @@ def main():
             capture_output=True,
             timeout=60
         )
+        # 不再在此处进行 disliked 保存，改为按顺序
+        print("💾 Saving disliked...")
+        save_post(disliked, now)
+        
         subprocess.run(
             ["bash", "push.sh"],
             cwd=Path(__file__).parent.parent,

@@ -151,6 +151,11 @@ def generate_deep_comment(post, score):
     try:
         result, model_name = ask_llm(prompt)
         if result:
+            # 强行过滤 AI 常用开头
+            banned_prefixes = ["这货", "这条推文", "刚才看到", "刚刚读完", "看到这篇", "手指悬在"]
+            for prefix in banned_prefixes:
+                if result.startswith(prefix):
+                    result = result[len(prefix):].lstrip('，,。.:： \n')
             return result, model_name
     except Exception as e:
         print(f"  ⚠️ LLM Bridge failed: {e}")

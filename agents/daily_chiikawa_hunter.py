@@ -129,6 +129,11 @@ def generate_comment(tweet_data):
         from llm_bridge import ask_llm
         result, model_name = ask_llm(user_prompt, system_prompt=style_guide)
         if result:
+            # 强行过滤 AI 常用开头
+            banned_prefixes = ["这条推文", "这货", "看到这篇", "这张照片", "刚才看到", "我喜欢的"]
+            for prefix in banned_prefixes:
+                if result.startswith(prefix):
+                    result = result[len(prefix):].lstrip('，,。.:： \n')
             tweet_data['model_used'] = model_name
             return result
     except Exception as e:
