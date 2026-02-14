@@ -15,6 +15,7 @@ import sys
 sys.path.append(str(Path(__file__).parent.parent))
 sys.path.append(str(Path(__file__).parent))
 from core.utils_security import load_config, resolve_path
+from autonomous_poster import download_remote_image
 
 SEC_CONFIG = load_config()
 POSTS_DIR = resolve_path("./posts")
@@ -179,7 +180,23 @@ def save_post(selection, post_time):
     
     # 获取原始时间
     time_str = tweet.get('createdAt', tweet.get('created_at', ''))
+
+    # 获取配图并下载到本地
+    media = tweet.get('media', [])
+    cover_image = ""
+    local_media_paths = []
     
+    if media:
+        for m in media:
+            img_url = m.get('url')
+            if img_url:
+                local_path = download_remote_image(img_url, folder="daily_picker")
+                if local_path:
+                    local_media_paths.append(local_path)
+        
+        if local_media_paths:
+            cover_image = local_media_paths[0]
+
     # 内容
     post_content = f"""---
 time: {post_time.strftime("%Y-%m-%d %H:%M:%S")}
@@ -188,12 +205,23 @@ mood: {mood}
 model: {model_used}
 original_time: {time_str}
 original_url: {tweet_url}
----
+"""
+    if cover_image:
+        post_content += f"cover: {cover_image}\n"
+    
+    post_content += "---\n\n"
+    post_content += f"{reason}\n\n"
+    
+    # 构造推文引用内容
+    repost_text = text
+    if local_media_paths:
+        repost_text += "\n\n"
+        # 在引用块内显示所有已下载的图片
+        for lp in local_media_paths:
+            repost_text += f"![img](static/{lp})\n"
 
-{reason}
-
-> **From X (@{author})**:
-> {text}
+    post_content += f"""> **From X (@{author})**:
+> {repost_text}
 """
     
     with open(filepath, 'w', encoding='utf-8') as f:

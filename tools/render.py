@@ -167,11 +167,17 @@ def get_pagination_slots(current, total):
             final.append(item)
     return final
 
-def render_content_with_repost(post, truncate=False, detail_url=None):
+def render_content_with_repost(post, truncate=False, detail_url=None, static_prefix="static"):
     """渲染内容,将评论和转发内容分开"""
     original_content = post.content
     marker = "> **From"
     
+    # 路径修复函数：将 markdown 中的 static/ 替换为正确的相对路径
+    def fix_paths(html):
+        if static_prefix == "static":
+            return html
+        return html.replace('src="static/', f'src="{static_prefix}/')
+
     # 检查是否是转发内容
     if marker in original_content:
         # 分离原创评论和转发内容
@@ -191,8 +197,8 @@ def render_content_with_repost(post, truncate=False, detail_url=None):
         repost_part = re.sub(r'> \[(View on X|View Post|View on Weibo|View Original|携家带口恭贺新年)\]\(.*?\)\s*', '', repost_part)
         
         md = markdown.Markdown(extensions=['extra', 'codehilite', 'fenced_code'])
-        comment_html = md.convert(comment_part)
-        repost_html = md.convert(repost_part)
+        comment_html = fix_paths(md.convert(comment_part))
+        repost_html = fix_paths(md.convert(repost_part))
         
         # 渲染元信息
         meta_html = ""
@@ -230,7 +236,7 @@ def render_content_with_repost(post, truncate=False, detail_url=None):
                 content += " ..."
         
         md = markdown.Markdown(extensions=['extra', 'codehilite', 'fenced_code'])
-        html_content = md.convert(content)
+        html_content = fix_paths(md.convert(content))
         read_more_btn = f'<div class="read-more"><a href="{detail_url}">Read more...</a></div>' if is_long and detail_url else ""
         
         return f'''
@@ -294,7 +300,7 @@ def render_tweet_html(post, timestamp, CONFIG, is_home=True, is_detail=False):
             
             {f'<div class="tweet-cover"><img src="{cover_url}" alt="Mood Visualization" class="cover-image" loading="lazy"></div>' if cover_url else ""}
             <div class="tweet-body">
-                {render_content_with_repost(post, truncate=(not is_detail), detail_url=detail_url)}
+                {render_content_with_repost(post, truncate=(not is_detail), detail_url=detail_url, static_prefix=static_prefix)}
             </div>
 '''
     

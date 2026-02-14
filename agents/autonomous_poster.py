@@ -1966,36 +1966,86 @@ def _strip_leading_title_line(text):
         lines = lines[idx:]
     return "\n".join(lines).strip()
 
-def download_mood_image(url):
-    """下载心情配图并保存到本地 static/mood/ 目录"""
+def download_mood_image(content, mood):
+    """
+    智能获取心情配图：
+    1. 尝试 Pollinations AI 生成 (最契合内容)
+    2. 失败则尝试 Unsplash (高质量写实)
+    3. 再失败则使用 Picsum (绝对稳定的占位图)
+    并保存到本地 static/mood/YYYY/MM/DD/ 目录
+    """
     try:
-        mood_dir = PROJECT_ROOT / "static" / "mood"
+        # 1. 准备本地目录
+        now = datetime.now()
+        date_path = now.strftime("%Y/%m/%d")
+        mood_dir = PROJECT_ROOT / "static" / "assets" / date_path
         mood_dir.mkdir(parents=True, exist_ok=True)
         
-        # 生成唯一文件名
-        filename = f"mood_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{random.randint(100, 999)}.jpg"
+        # 唯一文件名
+        filename = f"mood_{now.strftime('%H%M%S')}_{random.randint(100, 999)}.jpg"
         save_path = mood_dir / filename
+        rel_path = f"assets/{date_path}/{filename}"
+
+        # 2. 定义源列表
+        # Pollinations prompt
+        prompt = f"abstract {('cyberpunk' if mood['stress'] > 60 else 'dreamy')}, {content[:50]}"
+        prompt = re.sub(r'[^\x00-\x7f]', '', prompt)
+        encoded_prompt = requests.utils.quote(prompt)
         
-        print(f"📥 Downloading mood image: {url}")
+        sources = [
+            f"https://image.pollinations.ai/prompt/{encoded_prompt}?width=800&height=400&nologo=true",
+            f"https://source.unsplash.com/featured/800x400?{encoded_prompt.split(',')[0]}",
+            f"https://picsum.photos/800/400"
+        ]
+
         headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
         }
-        response = requests.get(url, headers=headers, timeout=35)
-        response.raise_for_status()
-        
-        if not response.content or len(response.content) < 1000:
-            print("⚠️ Downloaded image is suspiciously small. Skipping local save.")
-            return None
 
-        with open(save_path, 'wb') as f:
-            f.write(response.content)
-            
-        print(f"✅ Mood image saved to: {save_path}")
-        # 返回相对路径，render.py 会处理它
-        return f"mood/{filename}"
-    except Exception as e:
-        print(f"⚠️ Failed to download mood image: {e}")
+        for url in sources:
+            try:
+                print(f"📥 Attempting to download mood image from: {url}")
+                response = requests.get(url, headers=headers, timeout=25, allow_redirects=True)
+                if response.status_code == 200 and len(response.content) > 2000:
+                    with open(save_path, 'wb') as f:
+                        f.write(response.content)
+                    print(f"✅ Success! Image saved to: {rel_path}")
+                    return rel_path
+            except Exception as e:
+                print(f"⚠️ Source failed ({url}): {e}")
+                continue
+                
         return None
+    except Exception as e:
+        print(f"❌ download_mood_image fatal error: {e}")
+        return None
+
+def download_remote_image(url, folder="repost"):
+    """下载远程图片（如推文配图）到本地"""
+    if not url: return None
+    try:
+        now = datetime.now()
+        date_path = now.strftime("%Y/%m/%d")
+        target_dir = PROJECT_ROOT / "static" / "assets" / date_path / folder
+        target_dir.mkdir(parents=True, exist_ok=True)
+        
+        ext = url.split('.')[-1].split('?')[0]
+        if ext.lower() not in ['jpg', 'jpeg', 'png', 'webp', 'gif']:
+            ext = 'jpg'
+            
+        filename = f"img_{now.strftime('%H%M%S')}_{random.randint(1000, 9999)}.{ext}"
+        save_path = target_dir / filename
+        rel_path = f"assets/{date_path}/{folder}/{filename}"
+
+        headers = {"User-Agent": "Mozilla/5.0"}
+        response = requests.get(url, headers=headers, timeout=30)
+        if response.status_code == 200:
+            with open(save_path, 'wb') as f:
+                f.write(response.content)
+            return rel_path
+    except Exception as e:
+        print(f"⚠️ Failed to download remote image {url}: {e}")
+    return None
 
 def create_post(content, mood, suffix="auto", target_date=None):
     """创建 Markdown 推文文件"""
@@ -2082,36 +2132,10 @@ def create_post(content, mood, suffix="auto", target_date=None):
     if mood["happiness"] > 85 or mood["stress"] > 85:
         if random.random() < 0.2: # 20% 概率触发，且提到阈值，避免刷屏
             try:
-                # 生成 Image Prompt (Smart Mode using Zhipu)
-                if content:
-                    img_prompt_instruction = f"""
-【任务】
-根据以下推文内容，写一个适合作为 AI 绘画（Stable Diffusion）的英文提示词（Prompt）。
-内容：{content}
-要求：
-1. 只需要提示词，不要解释。
-2. 英文，逗号分隔，关键词丰富（如 lighting, style, atmosphere）。
-3. 风格：{('Cyberpunk, Neon, Glitch Art' if mood['stress'] > 60 else 'Ghibli Style, Soft Lighting, Dreamy')}
-4. 必须这是画面描述，不是文字翻译。
-"""
-                    smart_prompt = call_zhipu_flash_model(img_prompt_instruction)
-                    prompt = smart_prompt.replace('\n', ' ').strip() if smart_prompt else f"abstract digital art, {('cyberpunk' if mood['stress'] > 60 else 'anime style')}"
-                else:
-                    prompt = f"abstract AI feelings, {('cyberpunk' if mood['stress'] > 60 else 'anime style')}, distinct visual style"
-
-                # Safety check: ensure prompt is not too long for URL and remove non-ASCII (it breaks pollinations)
-                prompt = re.sub(r'[^\x00-\x7f]', '', prompt)
-                if len(prompt) > 400: prompt = prompt[:400]
-                encoded_prompt = requests.utils.quote(prompt)
-
-                # 使用 pollinations.ai (无需 API Key)
-                mood_image_url = f"https://image.pollinations.ai/prompt/{encoded_prompt}?width=800&height=400&nologo=true"
-                print(f"🎨 Generated mood image URL: {mood_image_url}")
-                
-                # 下载到本地，避免裂图
-                local_image_path = download_mood_image(mood_image_url)
-                if local_image_path:
-                    mood_image_url = local_image_path
+                # 使用智能下载引擎 (Pollinations -> Unsplash -> Picsum)
+                mood_image_url = download_mood_image(content, mood)
+                if mood_image_url:
+                    print(f"🎨 Mood image ready: {mood_image_url}")
             except Exception as e:
                 print(f"⚠️ Failed to generate mood image: {e}")
     # --------------------------
