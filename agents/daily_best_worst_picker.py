@@ -286,6 +286,9 @@ def main():
     
     print(f"Found {len(tweets)} tweets, analyzing...")
     
+    # 是否为 dry-run
+    is_dry_run = "--dry-run" in sys.argv
+    
     # 分析并选出
     favorite, disliked = analyze_and_pick(tweets)
     
@@ -293,6 +296,12 @@ def main():
         print("Failed to pick tweets")
         return
     
+    if is_dry_run:
+        print("🧪 Dry-run mode: Printing results instead of saving.")
+        print(f"FAVORITE: {favorite['reason']}")
+        print(f"DISLIKED: {disliked['reason']}")
+        return
+
     now = datetime.now()
     
     # 保存
