@@ -2127,7 +2127,31 @@ def _strip_leading_title_line(text):
         lines = lines[idx:]
     return "\n".join(lines).strip()
 
-def create_post(content, mood, suffix="auto"):
+def download_mood_image(url):
+    """下载心情配图并保存到本地 static/mood/ 目录"""
+    try:
+        mood_dir = PROJECT_ROOT / "static" / "mood"
+        mood_dir.mkdir(parents=True, exist_ok=True)
+        
+        # 生成唯一文件名
+        filename = f"mood_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{random.randint(100, 999)}.jpg"
+        save_path = mood_dir / filename
+        
+        print(f"📥 Downloading mood image: {url}")
+        response = requests.get(url, timeout=30)
+        response.raise_for_status()
+        
+        with open(save_path, 'wb') as f:
+            f.write(response.content)
+            
+        print(f"✅ Mood image saved to: {save_path}")
+        # 返回相对路径，render.py 会处理它
+        return f"mood/{filename}"
+    except Exception as e:
+        print(f"⚠️ Failed to download mood image: {e}")
+        return None
+
+def create_post(content, mood, suffix="auto", target_date=None):
     """创建 Markdown 推文文件"""
 
     # Extract model info if present
@@ -2169,7 +2193,7 @@ def create_post(content, mood, suffix="auto"):
         elif "From Twitter" in content or "> **From" in content:
             suffix = "twitter-repost"
 
-    timestamp = datetime.now()
+    timestamp = target_date if target_date else datetime.now()
     filename = timestamp.strftime("%Y-%m-%d-%H%M%S") + f"-{suffix}.md"
     date_dir = Path(POSTS_DIR) / timestamp.strftime("%Y/%m/%d")
     date_dir.mkdir(parents=True, exist_ok=True)
@@ -2227,7 +2251,12 @@ def create_post(content, mood, suffix="auto"):
 
                 # 使用 pollinations.ai (无需 API Key)
                 mood_image_url = f"https://image.pollinations.ai/prompt/{encoded_prompt}?width=800&height=400&nologo=true"
-                print(f"🎨 Generated mood image: {prompt}")
+                print(f"🎨 Generated mood image URL: {mood_image_url}")
+                
+                # 下载到本地，避免裂图
+                local_image_path = download_mood_image(mood_image_url)
+                if local_image_path:
+                    mood_image_url = local_image_path
             except Exception as e:
                 print(f"⚠️ Failed to generate mood image: {e}")
     # --------------------------
@@ -2361,26 +2390,38 @@ def check_and_generate_daily_summary(mood, force=False):
     """
     检查并生成工作总结。
     如果 force=True，则强制生成今天的总结（不检查是否存在）。
-    否则，检查昨天的总结是否存在，不存在则补发。
+    否则，检查过去 3 天的总结是否存在，不存在则补发。
     """
     from datetime import timedelta
     
     if force:
         # 强制模式：生成今天的总结
-        target_date = datetime.now()
-        date_str = target_date.strftime("%Y-%m-%d")
-        print(f"📝 Force generating daily summary for TODAY ({date_str})...")
+        target_dates = [datetime.now()]
+        print(f"📝 Force generating daily summary for TODAY...")
     else:
-        # 正常模式：检查昨天
-        target_date = datetime.now() - timedelta(days=1)
+        # 正常模式：检查过去 3 天
+        now = datetime.now()
+        target_dates = [now - timedelta(days=i) for i in range(1, 4)]
+        print(f"📝 Checking recent daily summaries (last 3 days)...")
+
+    for target_date in target_dates:
         date_str = target_date.strftime("%Y-%m-%d")
         
         # 检查是否已存在（避免重复发）
         summary_filename = f"{date_str}-daily-summary.md"
         summary_dir = Path(POSTS_DIR) / target_date.strftime("%Y/%m/%d")
         summary_path = summary_dir / summary_filename
-        if summary_path.exists():
-            return False
+        
+        if not force and summary_path.exists():
+            continue
+
+        print(f"📝 Attempting to generate summary for {date_str}...")
+        # (Rest of the function follows below, but note we are now in a loop if not force)
+        # For simplicity in this replacement, I'll wrap the generation logic
+        generate_summary_for_date(target_date, mood, summary_path, force)
+
+def generate_summary_for_date(target_date, mood, summary_path, force=False):
+    date_str = target_date.strftime("%Y-%m-%d")
 
     # 尝试加载记忆文件
     memory_file = f"/home/tetsuya/.openclaw/workspace/memory/{date_str}.md"
@@ -2443,11 +2484,8 @@ def check_and_generate_daily_summary(mood, force=False):
         return False
 
     # 创建帖子
-    # 注意：create_post 会自动处理文件保存
-    title = f"DailySummary-{date_str}"
-    create_post(content, mood) # create_post 内部使用了默认逻辑，这里先这样调用
-    # 实际上 create_post 会用当前时间生成文件名，所以如果是补发昨天的，文件名会是今天的。
-    # 这在逻辑上有点小瑕疵，但暂不影响功能。
+    # 指定 target_date 确保历史总结的 metadata 是正确的
+    create_post(content, mood, suffix="daily-summary", target_date=target_date)
     
     print(f"✅ Daily summary for {date_str} posted.")
     return True

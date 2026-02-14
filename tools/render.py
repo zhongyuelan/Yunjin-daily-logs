@@ -267,6 +267,12 @@ def render_tweet_html(post, timestamp, CONFIG, is_home=True, is_detail=False):
     else: # date page
         home_url = "../index.html"
 
+    cover_url = post.metadata.get("cover", "")
+    if cover_url and not cover_url.startswith(("http://", "https://")):
+        if cover_url.startswith("static/"):
+            cover_url = cover_url[7:]
+        cover_url = f"{static_prefix}/{cover_url}"
+    
     tweet_html = f'''
 <div class="tweet" data-tags="{tags_str}" data-type="{post_type}" data-source="{rel_path}">
     <div class="tweet-header">
@@ -286,7 +292,7 @@ def render_tweet_html(post, timestamp, CONFIG, is_home=True, is_detail=False):
                 <button class="tweet-delete-btn" data-file="{rel_path}" title="Delete this tweet">Delete</button>
             </div>
             
-            {f'<div class="tweet-cover"><img src="{post.metadata["cover"]}" alt="Mood Visualization" class="cover-image" style="width: 100%; border-radius: 12px; margin-top: 10px; margin-bottom: 5px;"></div>' if "cover" in post.metadata else ""}
+            {f'<div class="tweet-cover"><img src="{cover_url}" alt="Mood Visualization" class="cover-image" style="width: 100%; border-radius: 12px; margin-top: 10px; margin-bottom: 5px;"></div>' if cover_url else ""}
             <div class="tweet-body">
                 {render_content_with_repost(post, truncate=(not is_detail), detail_url=detail_url)}
             </div>

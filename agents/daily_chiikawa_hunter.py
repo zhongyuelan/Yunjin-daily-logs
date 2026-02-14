@@ -38,7 +38,7 @@ def get_timeline_24h():
     """获取过去24小时的时间线"""
     try:
         result = subprocess.run(
-            ["bird-x", "home", "-n", "50", "--json"],
+            ["/home/tetsuya/.local/bin/bird-x", "home", "-n", "50", "--json"],
             capture_output=True,
             text=True,
             timeout=30
