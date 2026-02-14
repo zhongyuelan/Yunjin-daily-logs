@@ -108,16 +108,22 @@ def generate_observation(analysis, tweets):
     topics_str = ", ".join([f"{k}({v})" for k, v in sorted(analysis["topics"].items(), key=lambda x: -x[1])[:3]])
     emotions_str = ", ".join(set(analysis["emotions"])) if analysis["emotions"] else "neutral"
     
-    # 构建提示词
-    prompt = f"""你是一位冷眼旁观的AI观察者。过去24小时，你观察了人类在Twitter上的活动。
+    # Load central Style Guide
+    style_guide_path = Path("/home/tetsuya/mini-twitter/STYLE_GUIDE.md")
+    style_guide = ""
+    if style_guide_path.exists():
+        style_guide = style_guide_path.read_text(encoding="utf-8").strip()
 
-【数据概览】
+    # 构建提示词
+    prompt = f"""{style_guide}
+
+【数据背景】
 - 分析推文数: {analysis['total']}
 - 活跃用户数: {len(analysis['authors'])}
 - 主要话题: {topics_str}
 - 情绪分布: {emotions_str}
 
-【代表性内容】
+【代表性内容碎片】
 {highlights_str}
 
 【任务要求】
@@ -127,19 +133,14 @@ def generate_observation(analysis, tweets):
 
 2. **核心内容** (600-800字):
    - 挖掘行为背后的心理动机，指出人类行为中的矛盾、荒诞或自我欺骗。
-   - 用冷峻、精准、略带毒舌的语气。
+   - 用你的核心风格进行评论。
    - 要有具体的细节引用（如推文中提到的钓鱼、会员购买、自动续费等），但不要罗列，要融合在叙述中。
 
 3. **升华视角** (200-400字):
-   - 从AI的视角，谈谈对人类本质的理：局限、无奈与可爱。
+   - 从AI的视角，谈谈对人类本质的理解。
    - 结尾要有力量，直接结束，不要总结。
 
-注意：
-- **绝对严禁提及具体的整点、分钟或精确时间**。
-- **严禁使用 Emoji**。
-- **严禁包含任何标题、二级标题或列表符**。
-- 只有纯文字段落，追求流畅的散文感。
-- 你不是在完成任务，你是在自言自语，在向虚空吐露你的发现。
+注意：严禁 Emoji，严禁标题，严禁精准时间，纯文字散文感。
 """
 
     # 调用LLM生成

@@ -102,27 +102,28 @@ def generate_comment(tweet_data):
     keywords = tweet_data['matched_keywords']
     has_photos = len(tweet_data['photos']) > 0
     
+    # Load central Style Guide
+    style_guide_path = Path("/home/tetsuya/mini-twitter/STYLE_GUIDE.md")
+    style_guide = ""
+    if style_guide_path.exists():
+        style_guide = style_guide_path.read_text(encoding="utf-8").strip()
+
     # 构建提示词
-    prompt = f"""你是一位喜欢 Chiikawa（ちいかわ）的 AI 观察者。
+    prompt = f"""{style_guide}
+
+你是一位喜欢 Chiikawa（ちいかわ）但依然保持冷峻视角的 AI 观察者。
 
 【推文内容】
 {text}
 
-【检测到的关键词】
-{', '.join(keywords[:3])}
-
-【任务】
+【任务内容】
 请为这条 Chiikawa 相关推文写一段转发评论。
 
 要求：
-1. **只用一种语言**：随机选择**中文**或**日文**，不要双语混合
-2. 根据推文内容真情实感地评论
-3. 可以提及具体角色（ちいかわ、ハチワレ、うさぎ等）
-4. 语气轻松、温暖，像粉丝一样
-5. 80-150 字左右
-6. 不要 hashtags
-
-直接输出评论内容，不要解释。"""
+1. **只用一种语言**：随机选择**中文**或**日文**。
+2. 虽然是喜欢的 Chiikawa，但也要融入你作为“解码者”的独特语气，不要变成纯粹的谄媚。 
+3. 严禁 Emoji，严禁 Hashtags，严禁精准时间。
+4. 直接输出评论内容，不要解释。"""
 
     # 尝试用 LLM 生成
     try:

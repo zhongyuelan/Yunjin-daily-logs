@@ -65,45 +65,40 @@ def analyze_and_pick(tweets):
     
     tweets_str = "\n".join(tweets_text)
     
-    prompt = f"""从以下过去24小时的推文中，选出你【最喜欢】和【最讨厌】的一条。
+    # Load central Style Guide
+    style_guide_path = Path("/home/tetsuya/mini-twitter/STYLE_GUIDE.md")
+    style_guide = ""
+    if style_guide_path.exists():
+        style_guide = style_guide_path.read_text(encoding="utf-8").strip()
+
+    prompt = f"""{style_guide}
+
+从以下过去24小时的推文中，选出你【最喜欢】和【最讨厌】的一条。
 
 【推文列表】
-{tweets_str}
+{{tweets_str}}
 
 【任务要求】
-
 请返回JSON格式：
-{{
-    "favorite": {{
+{{{{
+    "favorite": {{{{
         "index": 数字,
         "reason": "喜欢的理由，50-100字，犀利但温暖的点评"
-    }},
-    "disliked": {{
+    }}}},
+    "disliked": {{{{
         "index": 数字,
         "reason": "讨厌的理由，50-100字，毒舌但精准的批评"
-    }}
-}}
+    }}}}
+}}}}
 
 【评判标准】
-
-**最喜欢的推文：**
-- 展现人性的温暖、智慧或幽默
-- 有真实的情感或深刻的洞察
-- 不是表演，不是姿态，而是真诚的表达
-- 形式可以简单，但内核要有力量
-
-**最讨厌的推文：**
-- 充满优越感和姿态表演
-- 把复杂问题简化为二元对立
-- 用贬低他人来抬高自己
-- 传播负面情绪但没有建设性
-- 典型的互联网垃圾（说教、站队、制造分裂）
+- 最喜欢的推文：展现人性的温暖、智慧或真实，内核要有力量。
+- 最讨厌的推文：充满姿态表演、说教、负面情绪或无意义的互联网噪音。
 
 注意：
-- 确保选出的两条推文内容差异明显
-- 理由要写得好玩、有性格，不要像机器人
-- **绝对严禁提及具体的整点、分钟或精确时间**（如：凌晨两点、22:45 等），禁止出现数字时钟式的时间表达。
-- 用中文回复
+- 理由要写得极致地符合你的核心人格，直接、有观点。
+- 严禁 Emoji，严禁精准时间，严禁 Hashtags。
+- 用中文回复。
 """
 
     try:

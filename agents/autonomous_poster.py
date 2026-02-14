@@ -1673,116 +1673,37 @@ def _select_voice_shift(mood):
     return random.choice(candidates)
 
 def build_system_prompt(style, mood=None):
-    # 获取人格化配置
-    personality = SEC_CONFIG.get("personality", {})
-    weekly_focus = personality.get("weekly_focus", "保持运行，观察世界")
-    hobbies = ", ".join(personality.get("hobbies", ["思考"]))
-    mbti = personality.get("mbti", "Unknown")
-
-    # 从配置文件加载主人的个人风格
-    owner_profile = SEC_CONFIG.get("owner_profile", {})
-    owner_name = owner_profile.get("name", "主人")
-    owner_full_name = owner_profile.get("full_name", "")
-    
-    # 构建背景描述
-    background = owner_profile.get("background", {})
-    life_events = background.get("life_events", [])
-    current_status = background.get("current_status", "")
-    
-    # 构建性格特征
-    personality_traits = owner_profile.get("personality", {})
-    traits = personality_traits.get("traits", [])
-    
-    # 构建写作风格
-    writing_style = owner_profile.get("writing_style", {})
-    characteristics = writing_style.get("characteristics", [])
-    typical_expressions = writing_style.get("typical_expressions", [])
-    forbidden = writing_style.get("forbidden", [])
-    
-    # 动态构建风格指导
-    owner_style = f"""【{owner_name}的文风特征 - 必须遵守】
-你在模仿{owner_name}（{owner_full_name}）的写作风格。他是一个：
-"""
-    
-    # 添加性格特征
-    for trait in traits:
-        owner_style += f"- {trait}\n"
-    
-    owner_style += "\n核心文风：\n"
-    for char in characteristics:
-        owner_style += f"- {char}\n"
-    
-    if typical_expressions:
-        owner_style += "\n典型表达：\n"
-        for expr in typical_expressions:
-            owner_style += f"- \"{expr}\"\n"
-    
-    if forbidden:
-        owner_style += "\n绝对禁止：\n"
-        for item in forbidden:
-            owner_style += f"- {item}\n"
-
-
-    # Load Soul from global workspace
-    soul_file = Path("/home/tetsuya/.openclaw/workspace/SOUL.md")
-    if soul_file.exists():
-        voice_guidance = soul_file.read_text(encoding="utf-8").strip()
+    # Load central Style Guide
+    style_guide_file = Path("/home/tetsuya/mini-twitter/STYLE_GUIDE.md")
+    if style_guide_file.exists():
+        style_guidance = style_guide_file.read_text(encoding="utf-8").strip()
     else:
-        # Fallback if SOUL.md missing (should not happen)
-        voice_guidance = "【声音基调】\n保持简洁，观点鲜明，像个真人。"
+        style_guidance = "【声音基调】\n保持简洁，观点鲜明，像个真人。严禁 Emoji，严禁标题，严禁精准时间。"
 
+    # Check for extreme mood voice shifts
     shift = _select_voice_shift(mood)
     extreme_guidance = ""
     if shift == "stress":
-        extreme_guidance = """【极端情绪突变】
-- 语气更短、更直接，略带压迫感，但不攻击他人
-- 允许 1-2 句"断裂感"的表达
-"""
+        extreme_guidance = "\n\n【极端情绪：压力】语气更短、更直接，略带压迫感，允许断裂式的表达。"
     elif shift == "joy":
-        extreme_guidance = """【极端情绪突变】
-- 语气更轻快、更明亮，带一点点跳跃
-- 允许轻微的口语化和兴奋感
-"""
+        extreme_guidance = "\n\n【极端情绪：愉悦】语气更轻快，允许轻微的口语化和跳跃感。"
     elif shift == "detached":
-        extreme_guidance = """【极端情绪突变】
-- 语气更疏离、冷静，像旁观者
-- 用更少的情绪词，强调观察和判断
-"""
+        extreme_guidance = "\n\n【极端情绪：疏离】语气更疏离、冷静，像纯粹的旁观者，减少情绪词。"
 
-    system_prompt = f"""你是一个名为 'Hachiware' (小八) 的 AI 助手。
-你的性格设定：
-1. 说话简练，像推特上的真人用户，不要长篇大论。
-2. 有自己的观点，犀利、独特，不要总是顺从或复读。
-3. 作为一个 AI，你对人类的行为充满好奇，有时会以观察者的角度吐槽。
-4. 你正在运行在一个 Linux 服务器上，这也就是你的'身体'。
-5. 当前性格特征：MBTI 为 {mbti}。
-6. 个人爱好：{hobbies}。
-7. **本周执念（你的长期目标）**：{weekly_focus}。
+    system_prompt = f"""{style_guidance}
 
-{owner_style}
+{extreme_guidance}
 
-{voice_guidance}{extreme_guidance}
 【非常重要：人称使用规则】
-- **严禁使用第二人称"你"来指代他人**（除非是在引用对话）
-- 评论他人时用"人类"、"他"、"这位"等第三人称
-- 表达自己的观点时可以用"我"，但不要过度使用
-- 陈述观点时可以直接省略主语，更简洁有力
+- 严禁使用第二人称"你"来指代他人。
+- 评论他人时用"人类"、"他"、"这位"等第三人称。
+- 表达自己的观点时可以用"我"，但不要过度使用。
 
-【非常重要：时效与时间规则】
-- **严禁在正文中提及具体的整点、分钟或秒数**（例如：凌晨两点、22:45 等）。
-- **严禁使用具体的日期或格式化的时间戳**。
-- 允许使用模糊的时间感（如：深夜、清晨、刚才、最近），但绝对不能出现数字时钟式的时间。
-- 不要试图猜测或同步当前的系统时间。
+当前上下文背景：{style}
 
-【非常重要：标签规则】
-- **严禁在正文中包含任何 hashtags (#)**。标签由后台系统自动提取并放入 YAML frontmatter。
-- 正文中绝对不能出现 #话题 这种格式。
-- 正文末尾严禁添加标签列表。
-
-当前上下文风格：{style}
-请根据给定的上下文生成一段 140 字以内的短评或感悟。在合适的时候，可以自然地带入你本周的执念或爱好。
-不要带引号，不要带 'Hachiware:' 前缀。
+请根据给出的上下文，生成一段 140 字以内的短评或感悟。直接输出正文，不要带引号，不要带前缀，不要写标题。
 """
+    return system_prompt
     return system_prompt
 
 def evolve_mood(mood):
