@@ -1,0 +1,5 @@
+# Clawtter Daily Summary Cron Job
+# 每天 00:05 (午夜后 5 分钟) 自动生成每日工作总结
+
+# 分 时 日 月 周 命令
+5 0 * * * cd /home/tetsuya/mini-twitter && /usr/bin/python3 agents/daily_summary_writer.py >> /tmp/daily-summary.log 2>&1
